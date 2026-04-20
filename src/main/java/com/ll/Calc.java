@@ -22,11 +22,33 @@ public class Calc {
 
         ChangeMinus();
 
-        return Calc();
+        return Calc(0, expression.length() - 1);
     }
 
-    public static int Calc() {
+    public static int Calc(int start, int end) {
+        if (tokens.size() == 1)
+            return Integer.parseInt(tokens.getFirst());
 
+        int parseStartIndex = tokens.lastIndexOf("(");
+        if (parseStartIndex != -1 && start > parseStartIndex)
+            parseCalc();
+
+        for (int i = start; i < end; ++i)
+        {
+
+        }
+    }
+
+    public static void parseCalc(){
+        int parseStartIndex = tokens.lastIndexOf("(");
+
+        if (parseStartIndex == -1)
+            return;
+
+        int parseEndIndex = tokens.indexOf(")");
+        Calc(parseStartIndex, parseEndIndex);
+        tokens.remove(tokens.lastIndexOf("("));
+        tokens.remove(")");
     }
 
     public static void ChangeMinus() {
