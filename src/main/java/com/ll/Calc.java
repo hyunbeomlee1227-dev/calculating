@@ -147,4 +147,3 @@ public class Calc {
                 || minusCheck.equals("(");
     }
 }
-
