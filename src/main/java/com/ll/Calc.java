@@ -22,24 +22,62 @@ public class Calc {
 
         ChangeMinus();
 
-        return Calc(0, expression.length() - 1);
+        Calc(0, tokens.size() - 1);
+
+        return Integer.parseInt(tokens.getFirst());
     }
 
-    public static int Calc(int start, int end) {
+    public static void Calc(int start, int end) {
         if (tokens.size() == 1)
-            return Integer.parseInt(tokens.getFirst());
+            return;
 
         int parseStartIndex = tokens.lastIndexOf("(");
         if (parseStartIndex != -1 && start > parseStartIndex)
             parseCalc();
 
-        for (int i = start; i < end; ++i)
-        {
+        CalcBasicOperate(start, end);
+    }
 
+    private static void CalcBasicOperate(int start, int end) {
+        for (int i = start; i < tokens.size() && i < end; i++) {
+            if (tokens.get(i).equals("*") || tokens.get(i).equals("/")) {
+
+                double a = Double.parseDouble(tokens.get(i - 1));
+                double b = Double.parseDouble(tokens.get(i + 1));
+
+                double result = tokens.get(i).equals("*") ? a * b : a / b;
+
+                tokens.set(i - 1, String.valueOf(result));
+
+                tokens.remove(i);
+                tokens.remove(i);
+
+                --i;
+                --end;
+            }
+        }
+
+        for (int i = start; i < tokens.size() && i < end; i++) {
+
+            if (tokens.get(i).equals("+") || tokens.get(i).equals("-")) {
+
+                double a = Double.parseDouble(tokens.get(i - 1));
+                double b = Double.parseDouble(tokens.get(i + 1));
+
+                double result = tokens.get(i).equals("+") ? a + b : a - b;
+
+                tokens.set(i - 1, String.valueOf(result));
+
+                tokens.remove(i);
+                tokens.remove(i);
+
+                --i;
+                --end;
+            }
         }
     }
 
-    public static void parseCalc(){
+    public static void parseCalc() {
         int parseStartIndex = tokens.lastIndexOf("(");
 
         if (parseStartIndex == -1)
