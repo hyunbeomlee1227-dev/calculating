@@ -22,7 +22,7 @@ public class Calc {
 
         Calculate(0, tokens.size() - 1);
 
-        return Integer.parseInt(tokens.get(0));
+        return Integer.parseInt(tokens.getFirst());
     }
 
     public static void Calculate(int start, int end) {
@@ -35,11 +35,17 @@ public class Calc {
         if (parseStartIndex != -1 && start <= parseStartIndex)
             parseCalc();
 
+        if (tokens.size() == 2)
+        {
+            tokens.set(0, tokens.get(0) + tokens.get(1));
+            tokens.remove(1);
+        }
+
         CalcBasicOperate(start, end);
     }
 
     private static void CalcBasicOperate(int start, int end) {
-        for (int i = start; i < tokens.size() && i < end; i++) {
+        for (int i = start; i < tokens.size() && i < end; ++i) {
             if (tokens.get(i).equals("*") || tokens.get(i).equals("/")) {
 
                 int a = Integer.parseInt(tokens.get(i - 1));
@@ -57,7 +63,7 @@ public class Calc {
             }
         }
 
-        for (int i = start; i < tokens.size() && i < end; i++) {
+        for (int i = start; i < tokens.size() && i < end; ++i) {
 
             if (tokens.get(i).equals("+") || tokens.get(i).equals("-")) {
 
@@ -83,10 +89,28 @@ public class Calc {
         if (parseStartIndex == -1)
             return;
 
-        int parseEndIndex = tokens.indexOf(")");
+        int parseEndIndex = -1;
+        for (int i = parseStartIndex; i < tokens.size(); ++i)
+        {
+            if (tokens.get(i).equals(")"))
+            {
+                parseEndIndex = i;
+                break;
+            }
+        }
+
         Calculate(parseStartIndex + 1, parseEndIndex);
-        tokens.remove(tokens.lastIndexOf("("));
-        tokens.remove(")");
+
+        for (int i = parseStartIndex; i < tokens.size(); ++i)
+        {
+            if (tokens.get(i).equals(")"))
+            {
+                tokens.remove(i);
+                break;
+            }
+        }
+
+        tokens.remove(parseStartIndex);
 
         parseCalc();
     }
@@ -96,8 +120,18 @@ public class Calc {
             if (!tokens.get(i).equals("-")) continue;
 
             if (i == 0 || isOperator(tokens.get(i - 1))) {
+
                 if (i + 1 < tokens.size()) {
-                    tokens.set(i + 1, "-" + tokens.get(i + 1));
+                    String next = tokens.get(i + 1);
+
+                    if (next.equals("(")) {
+                        tokens.set(i, "-1");
+                        tokens.add(i + 1, "*");
+                        i++;
+                        continue;
+                    }
+
+                    tokens.set(i + 1, "-" + next);
                     tokens.remove(i);
                     i--;
                 }
