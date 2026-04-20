@@ -20,19 +20,19 @@ public class Calc {
             tokens.add(matcher.group());
         }
 
-        ChangeMinus();
+        Calculate(0, tokens.size() - 1);
 
-        Calc(0, tokens.size() - 1);
-
-        return Integer.parseInt(tokens.getFirst());
+        return Integer.parseInt(tokens.get(0));
     }
 
-    public static void Calc(int start, int end) {
+    public static void Calculate(int start, int end) {
+        ChangeMinus();
+
         if (tokens.size() == 1)
             return;
 
         int parseStartIndex = tokens.lastIndexOf("(");
-        if (parseStartIndex != -1 && start > parseStartIndex)
+        if (parseStartIndex != -1 && start <= parseStartIndex)
             parseCalc();
 
         CalcBasicOperate(start, end);
@@ -42,10 +42,10 @@ public class Calc {
         for (int i = start; i < tokens.size() && i < end; i++) {
             if (tokens.get(i).equals("*") || tokens.get(i).equals("/")) {
 
-                double a = Double.parseDouble(tokens.get(i - 1));
-                double b = Double.parseDouble(tokens.get(i + 1));
+                int a = Integer.parseInt(tokens.get(i - 1));
+                int b = Integer.parseInt(tokens.get(i + 1));
 
-                double result = tokens.get(i).equals("*") ? a * b : a / b;
+                int result = tokens.get(i).equals("*") ? a * b : a / b;
 
                 tokens.set(i - 1, String.valueOf(result));
 
@@ -61,10 +61,10 @@ public class Calc {
 
             if (tokens.get(i).equals("+") || tokens.get(i).equals("-")) {
 
-                double a = Double.parseDouble(tokens.get(i - 1));
-                double b = Double.parseDouble(tokens.get(i + 1));
+                int a = Integer.parseInt(tokens.get(i - 1));
+                int b = Integer.parseInt(tokens.get(i + 1));
 
-                double result = tokens.get(i).equals("+") ? a + b : a - b;
+                int result = tokens.get(i).equals("+") ? a + b : a - b;
 
                 tokens.set(i - 1, String.valueOf(result));
 
@@ -84,9 +84,11 @@ public class Calc {
             return;
 
         int parseEndIndex = tokens.indexOf(")");
-        Calc(parseStartIndex, parseEndIndex);
+        Calculate(parseStartIndex + 1, parseEndIndex);
         tokens.remove(tokens.lastIndexOf("("));
         tokens.remove(")");
+
+        parseCalc();
     }
 
     public static void ChangeMinus() {
